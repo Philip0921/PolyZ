@@ -84,7 +84,7 @@ public class EnemyFollow : MonoBehaviour
         {
             Hurt03.Play();
         }
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.5f);
         ScreenFlash.SetActive(false);
         yield return new WaitForSeconds(1);
         IsAttacking = 0;

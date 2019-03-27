@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Bullet
-  - tagToKill
   - Object
+  - Spider
+  - Zombie
   layers:
   - Default
   - TransparentFX
@@ -18,7 +18,7 @@ TagManager:
   - 
   - PostProcessing
   - Object
-  - 
+  - Enemy
   - 
   - 
   - 

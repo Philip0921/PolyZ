@@ -14,6 +14,8 @@ public class Weapon : MonoBehaviour
     public ParticleSystem muzzleFlash;
     public GameObject impactEffect;
     public GameObject bulletHoleEffect;
+    public GameObject bloodEffect;
+    public GameObject bloodEffectGreen;
 
     public bool isReloading = false;
     public float fireRate;
@@ -58,7 +60,7 @@ public class Weapon : MonoBehaviour
         }
 
         //When the player presses R the player reloads.
-        if (Input.GetKeyDown(KeyCode.R) && ammoClip > 0)
+        if (Input.GetKeyDown(KeyCode.R) && ammoClip > 0 && ammo < 10)
         {
             StartCoroutine(Reload());
             return;
@@ -102,12 +104,10 @@ public class Weapon : MonoBehaviour
             reloadText.enabled = false;
         }
 
-        if (ammoClip < 0)
+        if (ammoClip <= 0)
         {
             ammoClip = 0;
         }
-
-
 
     }
 
@@ -124,19 +124,35 @@ public class Weapon : MonoBehaviour
             Debug.Log(hit.transform.name);
 
             EnemyScript enemy = hit.transform.GetComponent<EnemyScript>();
+            SpiderHealth spider = hit.transform.GetComponent<SpiderHealth>();
+
+            if (spider != null)
+            {
+                spider.TakeDamage(damage);
+            }
 
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
             }
 
-            if (hit.collider.tag == "Object")
+            if (hit.transform.tag == "Untagged")
             {
                 GameObject BulletHole = Instantiate(bulletHoleEffect, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
                 GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
                 Destroy(impactGO, 2f);
                 Destroy(BulletHole, 5f);
 
+            }
+            if (hit.transform.tag == "Zombie")
+            {
+               GameObject Blood = Instantiate(bloodEffect, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
+                Destroy(Blood, 1f);
+            }
+            if (hit.transform.tag == "Spider")
+            {
+                GameObject BloodGreen = Instantiate(bloodEffectGreen, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
+                Destroy(BloodGreen, 1f);
             }
         }
     }
