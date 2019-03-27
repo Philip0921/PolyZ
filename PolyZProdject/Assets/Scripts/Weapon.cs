@@ -1,15 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class Weapon : MonoBehaviour
 {
-    public float damage = 10f;
+    [SerializeField]
+    private LayerMask layerMaskObject;
+
+    public int damage = 1;
     public float range = 100f;
 
     public Camera fpsCam;
     public ParticleSystem muzzleFlash;
     public GameObject impactEffect;
+    public GameObject bulletHoleEffect;
 
     public bool isReloading = false;
     public float fireRate;
@@ -115,20 +119,25 @@ public class Weapon : MonoBehaviour
 
         RaycastHit hit;
 
-        if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range))
+        if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range, layerMaskObject.value))
         {
             Debug.Log(hit.transform.name);
 
-            Target target = hit.transform.GetComponent<Target>();
+            EnemyScript enemy = hit.transform.GetComponent<EnemyScript>();
 
-            if (target != null)
+            if (enemy != null)
             {
-                target.TakeDamage(damage);
+                enemy.TakeDamage(damage);
             }
 
-            GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            if (hit.collider.tag == "Object")
+            {
+                GameObject BulletHole = Instantiate(bulletHoleEffect, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
+                GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+                Destroy(impactGO, 2f);
+                Destroy(BulletHole, 5f);
 
-            Destroy(impactGO, 2f);
+            }
         }
     }
 }
